@@ -1,0 +1,72 @@
+package site
+
+type Detail struct {
+	name	string
+	value string
+}
+
+type Annonce struc {
+	url string
+	title string
+	description
+	photos []string
+	details []Detail
+}
+
+
+func request(searchURL string) (*http.Response, error) {
+	baseClient := &http.Client{}
+
+	req, _ := http.NewRequest("GET", searchURL, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
+
+	res, err := baseClient.Do(req)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
+}
+func extractLinks( doc) {
+}
+
+func GetAnnonceDetails(annonce Annonce) Annonce {
+	currentAnnonce := annonce
+
+
+}
+
+func GetAnnonces(url string) []Annonce {
+	listAnnonces := []Annonce{}
+	res, _ := request("https://www.domimmo.com/immobilier/?id_di_ad_cat=1&id_di_ad_type=1,2,8&id_com_pays=GLP")
+
+	doc, err := goquery.NewDocumentFromResponse(res)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	sel := doc.Find("ul.e46 li.e47")
+	rank := 1
+	for i := range sel.Nodes {
+		item := sel.Eq(i)
+		linkTag := item.Find("a")
+		link, _ := linkTag.Attr("href")
+		titleTag := item.Find("a div.e51 div.e53 div.e58 b")
+		title := titleTag.Text()
+		link = strings.Trim(link, " ")
+		if link != "" && link != "#" {
+			result := Annonce{
+				title,
+				link,
+			}
+			results = append(results, result)
+			rank += 1
+		}
+	}
+
+	return results, err
+
+}
+
